@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Include="Agent.fs" />
     <Compile Include="Types.fs" />
+    <Compile Include="Stores\InMemoryEventStore.fs" />
   </ItemGroup>
 
 </Project>
