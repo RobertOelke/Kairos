@@ -9,6 +9,12 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Kairos.Server", "src\Kairos
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Kairos.Client", "src\Kairos.Client\Kairos.Client.fsproj", "{51790507-74BD-4233-846A-E6AAE71145F7}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Kairos.Server.Remoting", "src\Kairos.Server.Remoting\Kairos.Server.Remoting.fsproj", "{4E6163C9-83F4-4ACC-B544-BB46042F9DEB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AF035586-6077-45D2-80B7-09BBDADEA52F}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Kairos.Server.Remoting.Tests", "tests\Kairos.Server.Remoting.Tests\Kairos.Server.Remoting.Tests.fsproj", "{67BD5B47-F76D-4B37-9438-97D19C65F2E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +29,14 @@ Global
 		{51790507-74BD-4233-846A-E6AAE71145F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51790507-74BD-4233-846A-E6AAE71145F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51790507-74BD-4233-846A-E6AAE71145F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E6163C9-83F4-4ACC-B544-BB46042F9DEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E6163C9-83F4-4ACC-B544-BB46042F9DEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E6163C9-83F4-4ACC-B544-BB46042F9DEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E6163C9-83F4-4ACC-B544-BB46042F9DEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67BD5B47-F76D-4B37-9438-97D19C65F2E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67BD5B47-F76D-4B37-9438-97D19C65F2E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67BD5B47-F76D-4B37-9438-97D19C65F2E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67BD5B47-F76D-4B37-9438-97D19C65F2E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -30,6 +44,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{17FA5C42-39D4-4EBC-9389-03A3611CD632} = {BC2D160D-D4D0-4407-9BAD-B02E940E3752}
 		{51790507-74BD-4233-846A-E6AAE71145F7} = {BC2D160D-D4D0-4407-9BAD-B02E940E3752}
+		{4E6163C9-83F4-4ACC-B544-BB46042F9DEB} = {BC2D160D-D4D0-4407-9BAD-B02E940E3752}
+		{67BD5B47-F76D-4B37-9438-97D19C65F2E4} = {AF035586-6077-45D2-80B7-09BBDADEA52F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {40D1B0E0-D86C-4C39-BDC5-F630D4A30409}
