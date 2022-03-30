@@ -3,9 +3,33 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BC2D160D-D4D0-4407-9BAD-B02E940E3752}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Kairos.Server", "src\Kairos.Server\Kairos.Server.fsproj", "{17FA5C42-39D4-4EBC-9389-03A3611CD632}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Kairos.Client", "src\Kairos.Client\Kairos.Client.fsproj", "{51790507-74BD-4233-846A-E6AAE71145F7}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{17FA5C42-39D4-4EBC-9389-03A3611CD632}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17FA5C42-39D4-4EBC-9389-03A3611CD632}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17FA5C42-39D4-4EBC-9389-03A3611CD632}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17FA5C42-39D4-4EBC-9389-03A3611CD632}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51790507-74BD-4233-846A-E6AAE71145F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51790507-74BD-4233-846A-E6AAE71145F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51790507-74BD-4233-846A-E6AAE71145F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51790507-74BD-4233-846A-E6AAE71145F7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{17FA5C42-39D4-4EBC-9389-03A3611CD632} = {BC2D160D-D4D0-4407-9BAD-B02E940E3752}
+		{51790507-74BD-4233-846A-E6AAE71145F7} = {BC2D160D-D4D0-4407-9BAD-B02E940E3752}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {40D1B0E0-D86C-4C39-BDC5-F630D4A30409}
