@@ -27,6 +27,21 @@ type Aggregate<'data> = {
   State : 'data
 }
 
+[<RequireQualifiedAccess>]
+type CommandResult =
+| Ok
+| Rejected
+| NoHandler of Type
+| Error of exn
+
+type CommandHandler<'cmd> = EventSource -> 'cmd -> Async<CommandResult>
+
+[<RequireQualifiedAccess>]
+type QueryResult<'result> =
+| Ok of 'result
+| NoHandler
+| Error of exn
+
 type EventEncoder<'event> = 'event -> EventName * EventJson
 type EventDecoder<'event> = EventName * EventJson -> 'event
 
@@ -39,3 +54,9 @@ type IEventStore<'event> =
 type IAggregateStore<'state, 'event> =
   inherit IEventStore<'event>
   abstract member GetAggregate : EventSource -> Async<Aggregate<'state> option>
+
+type ICommandHandler =
+  abstract member Handle<'cmd> : EventSource * 'cmd -> Async<CommandResult>
+
+type IQueryHandler =
+  abstract member TryHandle<'input, 'result> : 'input -> Async<QueryResult<'result>>
