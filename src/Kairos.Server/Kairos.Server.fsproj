@@ -10,6 +10,7 @@
     <Compile Include="Types.fs" />
 	<Compile Include="Stores\InMemoryEventStore.fs" />
     <Compile Include="Stores\InMemoryAggregateStore.fs" />
+    <Compile Include="EventBus.fs" />
     <Compile Include="CommandHandler.fs" />
     <Compile Include="QueryHandler.fs" />
   </ItemGroup>

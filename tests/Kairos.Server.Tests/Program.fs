@@ -1,57 +1,62 @@
-﻿module Kairos.Server.Tests
+﻿namespace Kairos.Server.Tests
 
 open System
 open Kairos.Server
 open Expecto
+open Kairos.Server.Tests
 
-type TestEvent = 
-| EventOne of int
-| EventTwo of bool
+module Program =
 
-type Counter = { Count : int }
+  type TestEvent = 
+  | EventOne of int
+  | EventTwo of bool
 
-type CounterEvent = Inc | Dec
+  type Counter = { Count : int }
 
-let tests =
-  testList "All Tests" [
-    testAsync "Append and get" {
-      let src = Guid.NewGuid()
-      let store = InMemoryEventStore<TestEvent>() :> IEventStore<TestEvent>
+  type CounterEvent = Inc | Dec
 
-      let events = [ EventOne 1; EventOne 2 ]
+  let tests =
+    testList "All Tests" [
+      testAsync "Append and get" {
+        let src = Guid.NewGuid()
+        let store = InMemoryEventStore<TestEvent>() :> IEventStore<TestEvent>
 
-      do! store.Append { StreamSource = src; ExpectedVersion = None; Events = events }
+        let events = [ EventOne 1; EventOne 2 ]
 
-      let! res = store.GetStream src
+        do! store.Append { StreamSource = src; ExpectedVersion = None; Events = events }
+
+        let! res = store.GetStream src
       
-      Expect.equal res.Length 2 "Two events loaded"
-      Expect.equal (res |> List.map (fun e -> e.Event)) events "Appended events loaded"
-    }
+        Expect.equal res.Length 2 "Two events loaded"
+        Expect.equal (res |> List.map (fun e -> e.Event)) events "Appended events loaded"
+      }
 
-    testAsync "AggregateStore" {
-      let src = Guid.NewGuid()
+      testAsync "AggregateStore" {
+        let src = Guid.NewGuid()
 
-      let zero = { Count = 0 }
+        let zero = { Count = 0 }
 
-      let update state =
-        function
-        | Inc -> { state with Count = state.Count + 1 }
-        | Dec -> { state with Count = state.Count - 1 }
+        let update state =
+          function
+          | Inc -> { state with Count = state.Count + 1 }
+          | Dec -> { state with Count = state.Count - 1 }
 
-      let store = InMemoryAggregateStore<Counter, CounterEvent>(zero, update) :> IAggregateStore<Counter, CounterEvent>
-      let events = [ Inc; Inc; Dec ]
+        let store = InMemoryAggregateStore<Counter, CounterEvent>(zero, update) :> IAggregateStore<Counter, CounterEvent>
+        let events = [ Inc; Inc; Dec ]
         
-      do! store.Append { StreamSource = src; ExpectedVersion = None; Events = events }
+        do! store.Append { StreamSource = src; ExpectedVersion = None; Events = events }
 
-      let! counter = store.GetAggregate src
+        let! counter = store.GetAggregate src
 
-      Expect.isSome counter ""
+        Expect.isSome counter ""
 
-      let counter = counter.Value.State
+        let counter = counter.Value.State
 
-      Expect.equal counter { Count = 1 } ""
-    }
-  ]
+        Expect.equal counter { Count = 1 } ""
+      }
+  
+      EventBusTests.allTests
+    ]
 
-runTestsWithCLIArgs [] [||] tests
-|> ignore
+  runTestsWithCLIArgs [] [||] tests
+  |> ignore

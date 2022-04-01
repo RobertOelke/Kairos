@@ -36,6 +36,8 @@ type CommandResult =
 
 type CommandHandler<'cmd> = EventSource -> 'cmd -> Async<CommandResult>
 
+type EventsHandler<'event> = EventData<'event> list -> Async<unit>
+
 [<RequireQualifiedAccess>]
 type QueryResult<'result> =
 | Ok of 'result
@@ -54,6 +56,14 @@ type IEventStore<'event> =
 type IAggregateStore<'state, 'event> =
   inherit IEventStore<'event>
   abstract member GetAggregate : EventSource -> Async<Aggregate<'state> option>
+
+type IEventHandler<'event> =
+  abstract member HandleNewEvents : EventsHandler<'event>
+
+type IEventBus<'event> =
+  abstract member Subscribe : EventsHandler<'event> -> unit
+  abstract member Notify : EventData<'event> list -> unit
+  abstract member AwaitNotify : EventData<'event> list -> Async<unit>
 
 type ICommandHandler =
   abstract member Handle<'cmd> : EventSource * 'cmd -> Async<CommandResult>
