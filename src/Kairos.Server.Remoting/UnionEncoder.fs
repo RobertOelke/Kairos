@@ -34,7 +34,6 @@ module UnionEncoder =
 
       (name, event)
 
-
   let decoder<'event> () : EventDecoder<'event> =
     fun (name, json) ->
       let raw =
