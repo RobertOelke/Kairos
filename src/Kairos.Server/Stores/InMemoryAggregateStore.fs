@@ -88,5 +88,6 @@ type InMemoryAggregateStore<'state, 'event>(zero : 'state, update : 'state -> 'e
       agent.PostAndAsyncReply(fun reply -> GetAggregate (src, reply))
 
     member this.OnError : IEvent<exn> = errorEvent.Publish
-
+  
+  interface IEventProducer<'event> with
     member this.OnEvents : IEvent<EventData<'event> list> = eventsAppended.Publish

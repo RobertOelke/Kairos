@@ -13,6 +13,7 @@
     <Compile Include="EventBus.fs" />
     <Compile Include="CommandHandler.fs" />
     <Compile Include="QueryHandler.fs" />
+    <Compile Include="EventSourced.fs" />
   </ItemGroup>
 
 </Project>

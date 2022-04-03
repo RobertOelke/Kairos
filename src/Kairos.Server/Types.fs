@@ -44,7 +44,6 @@ type IEventStore<'event> =
   abstract member GetStream : EventSource -> Async<EventData<'event> list>
   abstract member Append : EventsToAppend<'event> -> Async<unit>
   abstract member OnError : IEvent<exn>
-  abstract member OnEvents : IEvent<EventData<'event> list>
 
 type IAggregateStore<'state, 'event> =
   inherit IEventStore<'event>
@@ -53,12 +52,13 @@ type IAggregateStore<'state, 'event> =
 
 // EventBus
 
-type EventsHandler<'event> = EventData<'event> list -> Async<unit>
-
-type IEventBus<'event> =
-  abstract member Subscribe : EventsHandler<'event> -> unit
-  abstract member Notify : EventData<'event> list -> unit
-  abstract member AwaitNotify : EventData<'event> list -> Async<unit>
+type IEventProducer<'event> =
+  abstract member OnEvents : IEvent<EventData<'event> list>
+  
+type IEventBus =
+  abstract member OnAll : IObservable<obj>
+  abstract member OnEvent<'event> : unit -> IObservable<EventData<'event>>
+  abstract member Notify<'event> : EventData<'event> list -> unit
 
 
 // Command
