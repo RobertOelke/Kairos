@@ -60,15 +60,13 @@ type InMemoryAggregateStore<'state, 'event>(zero : 'state, update : 'state -> 'e
         else
           let now = DateTime.UtcNow
           let newEvents =
-            oldEvents
-            @ (events.Events
-              |> List.mapi (fun i e -> {
-                  Source = events.StreamSource
-                  Version = currentVersion + (int64 i) + 1L
-                  RecordedAtUtc = now
-                  Event = e
-                })
-              )
+            events.Events
+            |> List.mapi (fun i e -> {
+                Source = events.StreamSource
+                Version = currentVersion + (int64 i) + 1L
+                RecordedAtUtc = now
+                Event = e
+              })
               
           eventsAppended.Trigger(newEvents)
           reply.Reply()
