@@ -29,6 +29,11 @@ type Aggregate<'data> = {
   State : 'data
 }
 
+type Projection<'state, 'event> = {
+  Zero : 'state
+  Update : 'state -> 'event -> 'state
+}
+
 type HandlerResult<'event, 'reason> =
 | Accepted of 'event list
 | Rejected of 'reason

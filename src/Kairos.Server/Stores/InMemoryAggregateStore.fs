@@ -7,7 +7,7 @@ type private InMemoryAggregateStoreMsg<'state, 'event> =
 | GetAggregate of EventSource * AsyncReplyChannel<Aggregate<'state> option>
 | Append of EventsToAppend<'event> * AsyncReplyChannel<unit>
 
-type InMemoryAggregateStore<'state, 'event>(zero : 'state, update : 'state -> 'event -> 'state) =
+type InMemoryAggregateStore<'state, 'event>(projection : Projection<'state, 'event>) =
   let errorEvent = Event<exn>()
   let eventsAppended = Event<EventData<'event> list>()
 
@@ -32,11 +32,11 @@ type InMemoryAggregateStore<'state, 'event>(zero : 'state, update : 'state -> 'e
               Source = e.Source
               Version = e.Version
               RecordedAtUtc = e.RecordedAtUtc
-              State = update s.State e.Event
+              State = projection.Update s.State e.Event
             }
 
           events
-          |> List.fold update' { Source = Guid.Empty; Version = 0; RecordedAtUtc = DateTime.MinValue; State = zero }
+          |> List.fold update' { Source = Guid.Empty; Version = 0; RecordedAtUtc = DateTime.MinValue; State = projection.Zero }
           |> Some
           |> reply.Reply
 

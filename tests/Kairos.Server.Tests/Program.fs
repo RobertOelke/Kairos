@@ -41,7 +41,7 @@ module Program =
           | Inc -> { state with Count = state.Count + 1 }
           | Dec -> { state with Count = state.Count - 1 }
 
-        let store = InMemoryAggregateStore<Counter, CounterEvent>(zero, update) :> IAggregateStore<Counter, CounterEvent>
+        let store = InMemoryAggregateStore<Counter, CounterEvent>({ Zero = zero; Update = update }) :> IAggregateStore<Counter, CounterEvent>
         let events = [ Inc; Inc; Dec ]
         
         do! store.Append { StreamSource = src; ExpectedVersion = None; Events = events }
