@@ -13,21 +13,17 @@ type CommandHandler() =
   interface ICommandHandler with
     member this.Handle<'cmd>(src : EventSource, cmd : 'cmd) : Async<CommandResult> =
       async {
-        try
-          let t = typeof<'cmd>
+        let t = typeof<'cmd>
 
-          match handlers.TryGetValue t with
-          | true, h ->
+        match handlers.TryGetValue t with
+        | true, h ->
 
-            match h with
-            | :? CommandHandler<'cmd> as handler ->
-              return! handler src cmd
-            |_ ->
-            return CommandResult.NoHandler t
+          match h with
+          | :? CommandHandler<'cmd> as handler ->
+            return! handler src cmd
+          |_ ->
+            return CommandResult.Error (new Exception($"No Handler for: {t.Name}"))
 
-          | false, _ -> 
-            return CommandResult.NoHandler t
-
-        with
-        | e -> return CommandResult.Error e
-      }
+        | false, _ -> 
+          return CommandResult.Error (new Exception($"No Handler for: {t.Name}"))
+      } |> Async.CatchCommandResult

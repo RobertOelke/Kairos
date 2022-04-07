@@ -54,7 +54,7 @@ type SqlEventStore<'event>(connectionString: string, ?tableName : string, ?encod
       then cmd.Parameters.AddWithValue("EventData", box DBNull.Value) |> ignore
       else cmd.Parameters.AddWithValue("EventData", box json) |> ignore
       
-      let! _ = cmd.ExecuteScalarAsync()
+      let! _ = cmd.ExecuteNonQueryAsync()
 
       return ()
     }
@@ -92,7 +92,7 @@ type SqlEventStore<'event>(connectionString: string, ?tableName : string, ?encod
 
           let createIndex = $"CREATE UNIQUE INDEX {tableName}_SourceVersion ON [dbo].[{tableName}] (Source ASC, VersionNr ASC)"
           cmd.CommandText <- createIndex
-          let! _ = cmd.ExecuteScalarAsync()
+          let! _ = cmd.ExecuteNonQueryAsync()
           ()
         with
         | _ ->

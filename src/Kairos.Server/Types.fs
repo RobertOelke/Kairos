@@ -71,8 +71,6 @@ type IEventBus =
 [<RequireQualifiedAccess>]
 type CommandResult =
 | Ok
-| Rejected
-| NoHandler of Type
 | Error of exn
 
 type CommandHandler<'cmd> = EventSource -> 'cmd -> Async<CommandResult>
@@ -86,8 +84,22 @@ type ICommandHandler =
 [<RequireQualifiedAccess>]
 type QueryResult<'result> =
 | Ok of 'result
-| NoHandler
 | Error of exn
 
 type IQueryHandler =
   abstract member TryHandle<'input, 'result> : 'input -> Async<QueryResult<'result>>
+
+type Async =
+  static member CatchCommandResult a =
+    async {
+      match! a |> Async.Catch with
+      | Choice1Of2 x -> return x
+      | Choice2Of2 exn -> return CommandResult.Error exn
+    }
+
+  static member CatchQueryResult query =
+    async {
+      match! query |> Async.Catch with
+      | Choice1Of2 x -> return x
+      | Choice2Of2 exn -> return QueryResult.Error exn
+    }
