@@ -6,7 +6,7 @@ open System.Data.SqlClient
 
 type private SqlEventStoreMsg<'event> =
 | Start
-| GetStream of EventSource * AsyncReplyChannel<EventData<'event> list>
+| GetStream of EventSource option * AsyncReplyChannel<EventData<'event> list>
 | Append of EventsToAppend<'event> * AsyncReplyChannel<unit>
 
 type SqlEventStore<'event>(connectionString: string, ?tableName : string, ?encoder : EventEncoder<'event>, ?decoder : EventDecoder<'event>) =
@@ -105,6 +105,8 @@ type SqlEventStore<'event>(connectionString: string, ?tableName : string, ?encod
         use connection = new SqlConnection(connectionString)
         do! connection.OpenAsync()
 
+        let where = if src.IsSome then "WHERE [Source] = @Source" else ""
+
         let select = $"
           SELECT [Source],
             [VersionNr],
@@ -112,12 +114,14 @@ type SqlEventStore<'event>(connectionString: string, ?tableName : string, ?encod
             [EventName],
             [EventData]
           FROM [dbo].[{tableName}]
-          WHERE [Source] = @Source
+          {where}
           ORDER BY [VersionNr]"
 
         use cmd = connection.CreateCommand()
         cmd.CommandText <- select
-        cmd.Parameters.AddWithValue("Source", box src) |> ignore
+        match src with
+        | Some src -> cmd.Parameters.AddWithValue("Source", box src) |> ignore
+        | None -> ()
 
         use reader = cmd.ExecuteReader()
 
@@ -178,8 +182,11 @@ type SqlEventStore<'event>(connectionString: string, ?tableName : string, ?encod
   do agent.Post Start
    
   interface IEventStore<'event> with
+    member this.Get () : Async<EventData<'event> list> =
+      agent.PostAndAsyncReply(fun reply -> GetStream (None, reply))
+
     member this.GetStream (src : EventSource) : Async<EventData<'event> list> =
-      agent.PostAndAsyncReply(fun reply -> GetStream (src, reply))
+      agent.PostAndAsyncReply(fun reply -> GetStream (Some src, reply))
 
     member this.Append (events : EventsToAppend<'event>) : Async<unit> =
       agent.PostAndAsyncReply(fun reply -> Append (events, reply))

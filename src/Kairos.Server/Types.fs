@@ -34,11 +34,6 @@ type Projection<'state, 'event> = {
   Update : 'state -> 'event -> 'state
 }
 
-type HandlerResult<'event, 'reason> =
-| Accepted of 'event list
-| Rejected of 'reason
-| Failed of exn
-
 type EventEncoder<'event> = 'event -> EventName * EventJson
 type EventDecoder<'event> = EventName * EventJson -> 'event
 
@@ -46,6 +41,7 @@ type EventDecoder<'event> = EventName * EventJson -> 'event
 // Store
 
 type IEventStore<'event> =
+  abstract member Get : unit -> Async<EventData<'event> list>
   abstract member GetStream : EventSource -> Async<EventData<'event> list>
   abstract member Append : EventsToAppend<'event> -> Async<unit>
   abstract member OnError : IEvent<exn>
@@ -73,7 +69,7 @@ type CommandResult =
 | Ok
 | Error of exn
 
-type CommandHandler<'cmd> = EventSource -> 'cmd -> Async<CommandResult>
+type CommandHandler<'cmd> = CommandHandler of (EventSource -> 'cmd -> Async<CommandResult>)
 
 type ICommandHandler =
   abstract member Handle<'cmd> : EventSource * 'cmd -> Async<CommandResult>
@@ -85,6 +81,8 @@ type ICommandHandler =
 type QueryResult<'result> =
 | Ok of 'result
 | Error of exn
+
+type QueryHander<'input, 'result> = QueryHander of (IEventBus -> 'input -> Async<'result>)
 
 type IQueryHandler =
   abstract member TryHandle<'input, 'result> : 'input -> Async<QueryResult<'result>>

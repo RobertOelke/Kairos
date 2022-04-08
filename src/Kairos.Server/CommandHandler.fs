@@ -19,7 +19,7 @@ type CommandHandler() =
         | true, h ->
 
           match h with
-          | :? CommandHandler<'cmd> as handler ->
+          | :? CommandHandler<'cmd> as (CommandHandler handler) ->
             return! handler src cmd
           |_ ->
             return CommandResult.Error (new Exception($"No Handler for: {t.Name}"))

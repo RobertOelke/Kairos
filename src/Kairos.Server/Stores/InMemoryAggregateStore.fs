@@ -3,6 +3,7 @@
 open System
 
 type private InMemoryAggregateStoreMsg<'state, 'event> =
+| Get of AsyncReplyChannel<EventData<'event> list>
 | GetStream of EventSource * AsyncReplyChannel<EventData<'event> list>
 | GetAggregate of EventSource * AsyncReplyChannel<Aggregate<'state> option>
 | Append of EventsToAppend<'event> * AsyncReplyChannel<unit>
@@ -13,6 +14,12 @@ type InMemoryAggregateStore<'state, 'event>(projection : Projection<'state, 'eve
 
   let update (storage : EventData<'event> list) (msg : InMemoryAggregateStoreMsg<'state, 'event>) =
     match msg with
+    | Get reply ->
+      async {
+        do reply.Reply(storage)
+
+        return storage
+      }
     | GetStream (src, reply) ->
       async {
         let events = storage |> List.filter (fun e -> e.Source = src)
@@ -76,6 +83,9 @@ type InMemoryAggregateStore<'state, 'event>(projection : Projection<'state, 'eve
   let agent = StatefullAgent<'event, EventData<'event> list>.Start([], update)
    
   interface IAggregateStore<'state, 'event> with
+    member this.Get () : Async<EventData<'event> list> =
+      agent.PostAndAsyncReply(Get)
+
     member this.GetStream (src : EventSource) : Async<EventData<'event> list> =
       agent.PostAndAsyncReply(fun reply -> GetStream (src, reply))
 

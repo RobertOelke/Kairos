@@ -5,6 +5,7 @@ open Kairos.Server
 
 type private SqlAggregateStoreMsg<'state, 'event> =
 | GetAggregate of EventSource * AsyncReplyChannel<Aggregate<'state> option>
+| Get of AsyncReplyChannel<EventData<'event> list>
 | GetStream of EventSource * AsyncReplyChannel<EventData<'event> list>
 | Append of EventsToAppend<'event> * AsyncReplyChannel<unit>
 
@@ -42,6 +43,12 @@ type SqlAggregateStore<'state, 'event>(
         let! stream = (eventStore :> IEventStore<'event>).GetStream src
         reply.Reply stream
       }
+      
+    | Get reply ->
+      async {
+        let! stream = (eventStore :> IEventStore<'event>).Get ()
+        reply.Reply stream
+      }
 
     | Append (events, reply) ->
       async {
@@ -73,6 +80,9 @@ type SqlAggregateStore<'state, 'event>(
   let agent = StatelessAgent<'event>.Start(update)
    
   interface IAggregateStore<'state, 'event> with
+    member this.Get () : Async<EventData<'event> list> =
+      agent.PostAndAsyncReply Get
+
     member this.GetStream (src : EventSource) : Async<EventData<'event> list> =
       agent.PostAndAsyncReply(fun reply -> GetStream (src, reply))
 

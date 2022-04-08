@@ -34,6 +34,7 @@ module EventSourced =
     config.Command.AddHandler(handler)
     config
 
-  let addQueryHandler (createHandler : IEventBus -> 'input -> Async<'output>) (config : EventSourcedConfig) =
-    config.Query.AddHandler(createHandler config.EventBus)
+  let addQueryHandler (createHandler : QueryHander<'input, 'output>) (config : EventSourcedConfig) =
+    let (QueryHander handler) = createHandler
+    config.Query.AddHandler(handler config.EventBus)
     config
