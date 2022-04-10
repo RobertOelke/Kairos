@@ -9,15 +9,14 @@ type EventSourcedConfig = {
 [<RequireQualifiedAccess>]
 module EventSourced =
 
-  let create () : EventSourcedConfig =
+  let create (eventBus : IEventBus) : EventSourcedConfig =
     let query = new QueryHandler()
     let commnad = new CommandHandler()
-    let eventBus = new EventBus()
 
     {
       Query = query
       Command = commnad
-      EventBus = eventBus :> IEventBus
+      EventBus = eventBus
     }
 
   let build (config : EventSourcedConfig) =
@@ -30,11 +29,15 @@ module EventSourced =
     store.OnEvents.Add(config.EventBus.Notify)
     config
 
+  let addConsumer (consumer : IEventConsumer<'event>) (config : EventSourcedConfig) =
+    config.EventBus.OnEvent().Add(consumer.Notify)
+    config
+
   let addCommandHandler (handler : CommandHandler<'cmd>) (config : EventSourcedConfig) =
     config.Command.AddHandler(handler)
     config
 
-  let addQueryHandler (createHandler : QueryHander<'input, 'output>) (config : EventSourcedConfig) =
-    let (QueryHander handler) = createHandler
-    config.Query.AddHandler(handler config.EventBus)
+  let addQueryHandler (handler : QueryHander<'input, 'output>) (config : EventSourcedConfig) =
+    let (QueryHander handler) = handler
+    config.Query.AddHandler(handler)
     config

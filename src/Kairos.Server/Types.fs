@@ -53,6 +53,9 @@ type IAggregateStore<'state, 'event> =
 
 // EventBus
 
+type IEventConsumer<'event> =
+  abstract member Notify : EventData<'event> -> unit
+
 type IEventProducer<'event> =
   abstract member OnEvents : IEvent<EventData<'event> list>
   
@@ -82,7 +85,7 @@ type QueryResult<'result> =
 | Ok of 'result
 | Error of exn
 
-type QueryHander<'input, 'result> = QueryHander of (IEventBus -> 'input -> Async<'result>)
+type QueryHander<'input, 'result> = QueryHander of ('input -> Async<'result>)
 
 type IQueryHandler =
   abstract member TryHandle<'input, 'result> : 'input -> Async<QueryResult<'result>>
