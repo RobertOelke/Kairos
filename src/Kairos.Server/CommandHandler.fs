@@ -3,15 +3,15 @@
 open System
 open System.Collections.Concurrent
 
-type CommandHandler() =
+type CommandHandler<'rejection>() =
   let handlers = new ConcurrentDictionary<Type, obj>()
 
-  member this.AddHandler<'cmd> (handler : CommandHandler<'cmd>) =
+  member this.AddHandler<'cmd, 'rejection> (handler : CommandHandler<'cmd, 'rejection>) =
     handlers.AddOrUpdate(typeof<'cmd>, box handler, fun t o -> (box handler))
     |> ignore
     
-  interface ICommandHandler with
-    member this.Handle<'cmd>(src : EventSource, cmd : 'cmd) : Async<CommandResult> =
+  interface ICommandHandler<'rejection> with
+    member this.Handle<'cmd>(src : EventSource, cmd : 'cmd) : Async<CommandResult<'rejection>> =
       async {
         let t = typeof<'cmd>
 
@@ -19,7 +19,7 @@ type CommandHandler() =
         | true, h ->
 
           match h with
-          | :? CommandHandler<'cmd> as (CommandHandler handler) ->
+          | :? CommandHandler<'cmd, 'rejection> as (CommandHandler handler) ->
             return! handler src cmd
           |_ ->
             return CommandResult.Error (new Exception($"No Handler for: {t.Name}"))

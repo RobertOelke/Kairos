@@ -56,6 +56,7 @@ module Program =
       }
   
       EventBusTests.allTests
+      ToDoListTest.allTests
     ]
 
   runTestsWithCLIArgs [] [||] tests

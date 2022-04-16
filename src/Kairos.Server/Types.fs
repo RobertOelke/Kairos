@@ -68,14 +68,15 @@ type IEventBus =
 // Command
 
 [<RequireQualifiedAccess>]
-type CommandResult =
+type CommandResult<'reason> =
 | Ok
+| Rejected of 'reason
 | Error of exn
 
-type CommandHandler<'cmd> = CommandHandler of (EventSource -> 'cmd -> Async<CommandResult>)
+type CommandHandler<'cmd, 'reason> = CommandHandler of (EventSource -> 'cmd -> Async<CommandResult<'reason>>)
 
-type ICommandHandler =
-  abstract member Handle<'cmd> : EventSource * 'cmd -> Async<CommandResult>
+type ICommandHandler<'rejection> =
+  abstract member Handle<'cmd> : EventSource * 'cmd -> Async<CommandResult<'rejection>>
 
 
 // Query
@@ -85,7 +86,7 @@ type QueryResult<'result> =
 | Ok of 'result
 | Error of exn
 
-type QueryHander<'input, 'result> = QueryHander of ('input -> Async<'result>)
+type QueryHandler<'input, 'result> = QueryHandler of ('input -> Async<'result>)
 
 type IQueryHandler =
   abstract member TryHandle<'input, 'result> : 'input -> Async<QueryResult<'result>>
