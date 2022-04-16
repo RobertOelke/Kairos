@@ -22,9 +22,9 @@ type QueryHandler() =
               let! result = handlerFunction input
               return QueryResult.Ok result
             | _ ->
-              return QueryResult.Error (new Exception($"No handler for: {typeof<'input>.Name} -> {typeof<'result>.Name}"))
+              return QueryResult.NoHandler
           | false, _ ->
-              return QueryResult.Error (new Exception($"No handler for: {typeof<'input>.Name} -> {typeof<'result>.Name}"))
+              return QueryResult.NoHandler
         with
         | e -> return QueryResult.Error e
       } |> Async.CatchQueryResult

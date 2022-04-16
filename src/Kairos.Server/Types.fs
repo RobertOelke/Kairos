@@ -72,6 +72,7 @@ type CommandResult<'reason> =
 | Ok
 | Rejected of 'reason
 | Error of exn
+| NoHandler
 
 type CommandHandler<'cmd, 'reason> = CommandHandler of (EventSource -> 'cmd -> Async<CommandResult<'reason>>)
 
@@ -85,6 +86,7 @@ type ICommandHandler<'rejection> =
 type QueryResult<'result> =
 | Ok of 'result
 | Error of exn
+| NoHandler
 
 type QueryHandler<'input, 'result> = QueryHandler of ('input -> Async<'result>)
 
